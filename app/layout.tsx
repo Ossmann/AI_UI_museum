@@ -1,11 +1,10 @@
-import { GeistSans } from 'geist/font/sans'
-import { GeistMono } from 'geist/font/mono'
+import { Poppins } from 'next/font/google';
 
 import '@/app/globals.css'
-import { cn } from '@/lib/utils'
 import { TailwindIndicator } from '@/components/tailwind-indicator'
 import { Providers } from '@/components/providers'
 import { Toaster } from '@/components/ui/sonner'
+import Image from 'next/image';
 
 export const metadata = {
   metadataBase: process.env.VERCEL_URL
@@ -22,6 +21,13 @@ export const metadata = {
   }
 }
 
+const poppins = Poppins({
+  weight: ['400', '500', '600', '700'],
+  subsets: ['latin'],
+  variable: '--font-poppins', // Optional: If you want to use it as a CSS variable
+  display: 'swap',
+});
+
 export const viewport = {
   themeColor: [
     { media: '(prefers-color-scheme: light)', color: 'white' },
@@ -37,11 +43,13 @@ export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={cn(
-          'font-sans antialiased',
-          GeistSans.variable,
-          GeistMono.variable
-        )}
+        className={poppins.className}
+        style={{
+          backgroundImage: 'url("/Night_Watch.jpg")',
+          backgroundSize: 'cover',
+          backgroundPosition: 'bottom right',
+        }}
+
       >
         <Toaster position="top-center" />
         <Providers
@@ -51,7 +59,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
           disableTransitionOnChange
         >
           <div className="flex flex-col min-h-screen">
-            <main className="flex flex-col flex-1 bg-muted/50">{children}</main>
+            <main className="flex flex-col flex-1">{children}</main>
           </div>
           <TailwindIndicator />
         </Providers>
