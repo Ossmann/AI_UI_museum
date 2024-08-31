@@ -96,7 +96,7 @@ async function confirmPurchase(price: number, numberOfTickets: number) {
 
     systemMessage.done(
       <SystemMessage>
-          You have successfully purchased your tickets to the. Total cost:{' $'}{totalPrice.toFixed(2)}
+          You have successfully AAAA purchased your tickets to the. Total cost:{' $'}{totalPrice.toFixed(2)}
       </SystemMessage>
     )
 
