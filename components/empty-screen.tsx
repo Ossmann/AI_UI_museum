@@ -12,7 +12,7 @@ export function EmptyScreen() {
     <div className="mx-auto max-w-2xl px-4">
       <div className="flex flex-col gap-2 rounded-lg border bg-background p-8 items-center">
         <h1 className="text-lg font-semibold text-center">
-          Welcome to the UI AI Tourism Planner!
+          Welcome to the UI AI Museum Planner!
         </h1>
         <p className="leading-normal text-muted-foreground">
           This is an UI AI chatbot app prototype built to help you as an intelligent tourism planner.

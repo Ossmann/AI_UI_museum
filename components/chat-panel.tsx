@@ -36,9 +36,9 @@ export function ChatPanel({
 
   const exampleMessages = [
     {
-      heading: 'Look for flights and buy your ticket',
-      subheading: 'from the Gold Coast to Austria',
-      message: `What are the available flights from the Gold Coast to Vienna?`
+      heading: 'I would like to buy',
+      subheading: '2 tickets',
+      message: `I would like to buy 2 tickets`
     },
     {
       heading: 'Find my flight with my flight number',

@@ -32,6 +32,7 @@ import { FlightsSkeleton } from '@/components/travel/flights-skeleton'
 import { Flights } from '@/components/travel/flights'
 import FlightsSchemaSkeleton from '@/components/travel/flightSchemas-skeleton'
 import { FlightSchema } from '@/components/travel/flightSchema'
+import { TicketPurchase } from '@/components/museum/ticket-purchase'
 
 import {
   formatNumber,
@@ -44,16 +45,17 @@ import { SpinnerMessage, UserMessage } from '@/components/stocks/message'
 import { Chat, Message } from '@/lib/types'
 import { auth } from '@/auth'
 
-async function confirmPurchase(airline: string, ticketPrice: number, flightNumber: string, departureAirport: string, destinationAirport: string) {
+async function confirmPurchase(price: number, numberOfTickets: number) {
   'use server'
 
+  const totalPrice = price * numberOfTickets
   const aiState = getMutableAIState<typeof AI>()
 
   const purchasing = createStreamableUI(
     <div className="inline-flex items-start gap-1 md:items-center">
       {spinner}
       <p className="mb-2">
-        Purchasing ticket {airline} for ${flightNumber}...
+        Purchasing {numberOfTickets} for ${price}...
       </p>
     </div>
   )
@@ -67,7 +69,7 @@ async function confirmPurchase(airline: string, ticketPrice: number, flightNumbe
       <div className="inline-flex items-start gap-1 md:items-center">
         {spinner}
         <p className="mb-2">
-        Purchasing ticket {airline} for ${flightNumber}...
+        Purchasing {numberOfTickets} for ${price}...
         working on it...
         </p>
       </div>
@@ -78,13 +80,13 @@ async function confirmPurchase(airline: string, ticketPrice: number, flightNumbe
     purchasing.done(
       <div>
         <p className="mb-2">
-          You have successfully purchased your ticket with {airline}.
+          You have successfully purchased your tickets to visit the museum.
           <div className='flex'>
             <div>
               Total cost:
             </div>
             <div className='font-bold'>
-              ${ticketPrice.toFixed(2)}
+              ${totalPrice.toFixed(2)}
             </div>
           </div>
         </p>
@@ -93,7 +95,7 @@ async function confirmPurchase(airline: string, ticketPrice: number, flightNumbe
 
     systemMessage.done(
       <SystemMessage>
-          You have successfully purchased your ticket with {airline}. Total cost:{' $'}{ticketPrice.toFixed(2)}
+          You have successfully purchased your tickets to the. Total cost:{' $'}{totalPrice.toFixed(2)}
       </SystemMessage>
     )
 
@@ -104,7 +106,7 @@ async function confirmPurchase(airline: string, ticketPrice: number, flightNumbe
         {
           id: nanoid(),
           role: 'system',
-          content: `[User has purchased a ticket from ${departureAirport} to ${destinationAirport} for a price of ${ticketPrice} ]`
+          content: `[User has purchased ${numberOfTickets} tickets for a price  ${price} ]`
         }
       ]
     })
@@ -143,19 +145,15 @@ async function submitUserMessage(content: string) {
     model: openai('gpt-3.5-turbo'),
     initial: <SpinnerMessage />,
     system: `\
-    You are a travel planning and flight booking assistant.
-    You and the user can discuss international flights and travel. The user can look for flights, get destination information, purchase a plane ticket in the UI or list flights for flight numbers.
-    
-    Messages inside [] means that it's a UI element or a user event. For example:
-    - "[Date of flight = 01.12.2024 ]" means that an interface of the flight data of the users flight is shown.
-    - "[User has changed the date to 12.02.2025]" means that the user has changed the date of his flight to 12.02.2025 in the UI.
+    You are an assistant that helps people prepare for their visit at Rijksmuseum in Amsterdam.
+    You and the user can discuss any topic related to the museum and visiting the museum. The user can purchase their ticket, get infos on the current exhibitions on display, play a mini-game and learn about the museums master pieces. 
 
+     Messages inside [] means that it's a UI element or a user event. For example:
+    - "[Price of Ticket = 100]" means that an interface of the ticket price is shown to the user.
+    - "[User has changed the amount of tickets to 10]" means that the user has changed the amount of tickets to 10 in the UI.
 
-    
-    If the user requests to list available flights, call \`list_flights\`. 
-    If the user selected a specific flight, show that flight information and call \`purchase_flight\`.
-    Do not call \`list_flight_schemas\` when the user selected a specific flight to purchase a ticket.
-    If the user requests to see detailed flight information for a flight number call \`list_flight_schemas\`.
+    If the user wants to purchase tickets, call \`show_ticket_purchase\`.
+
     If the user wants you to perform an impossible task that is not covered by the tools respond that you are a demo and cannot do that.
     
     Besides that, you can also chat with users and do some calculations if needed.`,
@@ -192,6 +190,112 @@ async function submitUserMessage(content: string) {
       return textNode
     },
     tools: {
+      showTicketPurchase: {
+        description:
+          'Show price and the UI to purchase a ticket for the museum visit. Use this if the user wants to purchase a ticket to visit the museum.',
+        parameters: z.object({
+          price: z.number().describe('The price of the ticket.'),
+          numberOfTickets: z
+            .number()
+            .optional()
+            .describe(
+              'The **number of tickets** for a visit to the museum to purchase. Can be optional if the user did not specify it.'
+            )
+        }),
+        generate: async function* ({ price, numberOfTickets = 2 }) {
+          const toolCallId = nanoid()
+
+          if (numberOfTickets <= 0 || numberOfTickets > 20) {
+            aiState.done({
+              ...aiState.get(),
+              messages: [
+                ...aiState.get().messages,
+                {
+                  id: nanoid(),
+                  role: 'assistant',
+                  content: [
+                    {
+                      type: 'tool-call',
+                      toolName: 'showTicketPurchase',
+                      toolCallId,
+                      args: { price, numberOfTickets }
+                    }
+                  ]
+                },
+                {
+                  id: nanoid(),
+                  role: 'tool',
+                  content: [
+                    {
+                      type: 'tool-result',
+                      toolName: 'showTicketPurchase',
+                      toolCallId,
+                      result: {
+                        price,
+                        numberOfTickets,
+                        status: 'expired'
+                      }
+                    }
+                  ]
+                },
+                {
+                  id: nanoid(),
+                  role: 'system',
+                  content: `[User has selected an invalid amount]`
+                }
+              ]
+            })
+
+            return <BotMessage content={'Invalid amount'} />
+          } else {
+            aiState.done({
+              ...aiState.get(),
+              messages: [
+                ...aiState.get().messages,
+                {
+                  id: nanoid(),
+                  role: 'assistant',
+                  content: [
+                    {
+                      type: 'tool-call',
+                      toolName: 'showTicketPurchase',
+                      toolCallId,
+                      args: { price, numberOfTickets }
+                    }
+                  ]
+                },
+                {
+                  id: nanoid(),
+                  role: 'tool',
+                  content: [
+                    {
+                      type: 'tool-result',
+                      toolName: 'showTicketPurchase',
+                      toolCallId,
+                      result: {
+                        price,
+                        numberOfTickets
+                      }
+                    }
+                  ]
+                }
+              ]
+            })
+
+            return (
+              <BotCard>
+                <TicketPurchase
+                  props={{
+                    numberOfTickets,
+                    price: +price,
+                    status: 'requires_action'
+                  }}
+                />
+              </BotCard>
+            )
+          }
+        }
+      },
       listFlights: {
         description: 'List three imaginary flights from the city that that the user is interested to a destination airport city around the world.',
         parameters: z.object({

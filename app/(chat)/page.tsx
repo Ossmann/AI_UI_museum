@@ -6,7 +6,7 @@ import { Session } from '@/lib/types'
 import { getMissingKeys } from '@/app/actions'
 
 export const metadata = {
-  title: 'AI UI Tourism Planner'
+  title: 'AI UI Museum Planner'
 }
 
 export default async function IndexPage() {

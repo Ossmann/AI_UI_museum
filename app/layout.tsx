@@ -12,9 +12,9 @@ export const metadata = {
     ? new URL(`https://${process.env.VERCEL_URL}`)
     : undefined,
   title: {
-    default: 'Travel AI UI Chatbot',
+    default: 'Museum AI UI Chatbot',
   },
-  description: 'An AI-powered chatbot travel planner built with Next.js and Vercel.',
+  description: 'An AI-powered chatbot to plan your museum visit built with Next.js and Vercel.',
   icons: {
     icon: '/favicon.ico',
     shortcut: '/favicon-16x16.png',
