@@ -33,6 +33,7 @@ import { Flights } from '@/components/travel/flights'
 import FlightsSchemaSkeleton from '@/components/travel/flightSchemas-skeleton'
 import { FlightSchema } from '@/components/travel/flightSchema'
 import { TicketPurchase } from '@/components/museum/ticket-purchase'
+import { Ticket } from '@/components/museum/ticket'
 
 import {
   formatNumber,
@@ -152,7 +153,9 @@ async function submitUserMessage(content: string) {
     - "[Price of Ticket = 100]" means that an interface of the ticket price is shown to the user.
     - "[User has changed the amount of tickets to 10]" means that the user has changed the amount of tickets to 10 in the UI.
 
-    If the user wants to purchase tickets, call \`show_ticket_purchase\`.
+    If the user wants to purchase tickets, call \`show_purchase\`.
+
+    If the user wants to see his final tickets, call \`show_ticket\`.
 
     If the user wants you to perform an impossible task that is not covered by the tools respond that you are a demo and cannot do that.
     
@@ -190,7 +193,7 @@ async function submitUserMessage(content: string) {
       return textNode
     },
     tools: {
-      showTicketPurchase: {
+      showPurchase: {
         description:
           'Show price and the UI to purchase a ticket for the museum visit. Use this if the user wants to purchase a ticket to visit the museum.',
         parameters: z.object({
@@ -289,6 +292,111 @@ async function submitUserMessage(content: string) {
                     numberOfTickets,
                     price: +price,
                     status: 'requires_action'
+                  }}
+                />
+              </BotCard>
+            )
+          }
+        }
+      },
+      showTickets: {
+        description:
+          'Show the tickets that a user bought in the previous step. Tickets includes number of tickets and the total price.',
+        parameters: z.object({
+          totalPrice: z.number().describe('The total price of the purchased tickets.'),
+          numberOfTickets: z
+            .number()
+            .optional()
+            .describe(
+              'The **number of tickets** for a visit to the museum to purchase. Can be optional if the user did not specify it.'
+            )
+        }),
+        generate: async function* ({ totalPrice, numberOfTickets = 1 }) {
+          const toolCallId = nanoid()
+
+          if (numberOfTickets <= 0 || numberOfTickets > 20) {
+            aiState.done({
+              ...aiState.get(),
+              messages: [
+                ...aiState.get().messages,
+                {
+                  id: nanoid(),
+                  role: 'assistant',
+                  content: [
+                    {
+                      type: 'tool-call',
+                      toolName: 'showTickets',
+                      toolCallId,
+                      args: { totalPrice, numberOfTickets }
+                    }
+                  ]
+                },
+                {
+                  id: nanoid(),
+                  role: 'tool',
+                  content: [
+                    {
+                      type: 'tool-result',
+                      toolName: 'showTickets',
+                      toolCallId,
+                      result: {
+                        totalPrice,
+                        numberOfTickets,
+                        status: 'expired'
+                      }
+                    }
+                  ]
+                },
+                {
+                  id: nanoid(),
+                  role: 'system',
+                  content: `[User has selected an invalid amount]`
+                }
+              ]
+            })
+
+            return <BotMessage content={'Invalid amount'} />
+          } else {
+            aiState.done({
+              ...aiState.get(),
+              messages: [
+                ...aiState.get().messages,
+                {
+                  id: nanoid(),
+                  role: 'assistant',
+                  content: [
+                    {
+                      type: 'tool-call',
+                      toolName: 'showTickets',
+                      toolCallId,
+                      args: { totalPrice, numberOfTickets }
+                    }
+                  ]
+                },
+                {
+                  id: nanoid(),
+                  role: 'tool',
+                  content: [
+                    {
+                      type: 'tool-result',
+                      toolName: 'showTickets',
+                      toolCallId,
+                      result: {
+                        totalPrice,
+                        numberOfTickets
+                      }
+                    }
+                  ]
+                }
+              ]
+            })
+
+            return (
+              <BotCard>
+                <Ticket
+                  props={{
+                    numberOfTickets: numberOfTickets,
+                    totalPrice: totalPrice,
                   }}
                 />
               </BotCard>

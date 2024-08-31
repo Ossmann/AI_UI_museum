@@ -22,6 +22,9 @@ export function TicketPurchase({
   const [aiState, setAIState] = useAIState<typeof AI>()
   const [, setMessages] = useUIState<typeof AI>()
   const { confirmPurchase } = useActions()
+  const { submitUserMessage } = useActions()
+
+
 
   // Unique identifier for this UI component.
   const id = useId()
@@ -119,14 +122,19 @@ export function TicketPurchase({
           <button
             className="w-full px-4 py-2 mt-6 font-bold bg-green-400 rounded-lg text-zinc-900 hover:bg-green-500"
             onClick={async () => {
-              const response = await confirmPurchase(price, value)
-              setPurchasingUI(response.purchasingUI)
+              const responseUI = await confirmPurchase(price, value)
+              setPurchasingUI(responseUI.purchasingUI)
 
-              // Insert a new system message to the UI.
-              setMessages((currentMessages: any) => [
-                ...currentMessages,
-                response.newMessage
-              ])
+              //Send the message to the AI that the ticket is bought to make it call the tool that shows the ticket
+              const response = await submitUserMessage(`Show me the tickets I have purchased.`)
+              setMessages(currentMessages => [...currentMessages, response])
+            
+
+              // // Insert a new system message to the UI.
+              // setMessages((currentMessages: any) => [
+              //   ...currentMessages,
+              //   response.newMessage
+              // ])
             }}
           >
             Purchase

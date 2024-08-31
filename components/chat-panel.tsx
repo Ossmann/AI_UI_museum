@@ -36,8 +36,8 @@ export function ChatPanel({
 
   const exampleMessages = [
     {
-      heading: 'I would like to buy',
-      subheading: '2 tickets',
+      heading: 'I would like to buy 2 tickets',
+      subheading: 'day pass',
       message: `I would like to buy 2 tickets`
     },
     {
