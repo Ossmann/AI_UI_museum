@@ -26,7 +26,7 @@ export function Ticket({
 
   return (
     <div className='w-3/4'>
-          <div className="grid grid-cols-3 items-center gap-4 p-4 border-2 border-gray-400 shadow-lg bg-gray-400/20 rounded-lg border-dashed">
+          <div className="grid grid-cols-3 items-center gap-4 p-4 border-2 border-gray-300 shadow-lg bg-gray-400/60 rounded-lg border-dashed">
             <div className="font-bold text-lg text-gray-800">Rijksmuseum</div>
             <div></div>
             <div className="w-14 row-span-2">

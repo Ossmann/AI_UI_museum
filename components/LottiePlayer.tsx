@@ -13,7 +13,7 @@ export default function LottiePlayer() {
         renderer: 'svg',
         loop: true,
         autoplay: true,
-        path: '/BoardingPass_Lottie.json',
+        path: '/Lottie_AI_orb.json',
       });
 
       // Set the speed of the animation

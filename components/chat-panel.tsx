@@ -41,14 +41,24 @@ export function ChatPanel({
       message: `I would like to buy 2 tickets`
     },
     {
-      heading: 'Find my flight with my flight number',
-      subheading: 'for my flight QF3459',
-      message: `Find the flight with the flight-number QF3459`
+      heading: 'Find related artworks from me',
+      subheading: 'The Night Watch',
+      message: `Find 3 artworks related to Night Watch with context information.`
+    },
+    {
+      heading: 'I want to play a mini game',
+      subheading: 'guessing authors of artworks',
+      message: `Start mini game that is about assigning the correct artists to artworks.`
+    },
+    {
+      heading: 'What are the current exhibitions?',
+      subheading: 'at my favorite museum',
+      message: `Find 3 artworks related to Night Watch with context information.`
     },
   ]
 
   return (
-    <div className="fixed inset-x-0 bottom-0 w-full bg-gradient-to-b from-muted/30 from-0% to-muted/30 to-50% duration-300 ease-in-out animate-in dark:from-background/10 dark:from-10% dark:to-background/80 peer-[[data-state=open]]:group-[]:lg:pl-[250px] peer-[[data-state=open]]:group-[]:xl:pl-[300px]">
+    <div className="fixed inset-x-0 bottom-0 w-full  from-muted/30 from-0% to-muted/30 to-50% duration-300 ease-in-out animate-in dark:from-background/10 dark:from-10% dark:to-background/80 peer-[[data-state=open]]:group-[]:lg:pl-[250px] peer-[[data-state=open]]:group-[]:xl:pl-[300px]">
       <ButtonScrollToBottom
         isAtBottom={isAtBottom}
         scrollToBottom={scrollToBottom}
@@ -60,7 +70,7 @@ export function ChatPanel({
             exampleMessages.map((example, index) => (
               <div
                 key={example.heading}
-                className={`cursor-pointer rounded-lg border bg-white p-4 hover:bg-zinc-50 dark:bg-zinc-950 dark:hover:bg-zinc-900 ${
+                className={`cursor-pointer rounded-lg bg-zinc-400 backdrop-blur-sm bg-opacity-20 border border-zin-200 shadow-white p-4 transition ease-in-out delay-150 hover:border hover:bg-zinc-400 dark:bg-zinc-950 dark:hover:bg-zinc-900  ${
                   index > 1 && 'hidden md:block'
                 }`}
                 onClick={async () => {
@@ -82,8 +92,8 @@ export function ChatPanel({
                   ])
                 }}
               >
-                <div className="text-sm font-semibold">{example.heading}</div>
-                <div className="text-sm text-zinc-600">
+                <div className="text-sm font-semibold text-white">{example.heading}</div>
+                <div className="text-sm text-zinc-100">
                   {example.subheading}
                 </div>
               </div>
@@ -119,9 +129,9 @@ export function ChatPanel({
           </div>
         ) : null}
 
-        <div className="space-y-4 border-t bg-background px-4 py-2 shadow-lg sm:rounded-t-xl sm:border md:py-4">
+        <div className="space-y-4 bg-zinc-400 backdrop-blur-sm bg-opacity-20 px-4 py-2 shadow-lg sm:rounded-t-xl md:py-4">
           <PromptForm input={input} setInput={setInput} />
-          <FooterText className="hidden sm:block" />
+          <FooterText className="hidden sm:block text-white" />
         </div>
       </div>
     </div>
