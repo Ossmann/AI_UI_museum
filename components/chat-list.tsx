@@ -16,7 +16,7 @@ export function ChatList({ messages, session, isShared }: ChatList) {
   }
 
   return (
-    <div className="relative mx-auto max-w-2xl px-4 bg-white rounded-2xl pt-8 pb-16 backdrop-blur-md bg-opacity-30 shadow-md shadow-white/40">
+    <div className="relative mx-auto max-w-2xl px-4 text-white bg-white rounded-2xl pt-8 pb-16 backdrop-blur-md bg-opacity-30">
       {!isShared && !session ? (
         <>
           <div className="group relative mb-4 flex items-start md:-ml-12">

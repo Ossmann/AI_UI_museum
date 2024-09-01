@@ -34,6 +34,8 @@ import FlightsSchemaSkeleton from '@/components/travel/flightSchemas-skeleton'
 import { FlightSchema } from '@/components/travel/flightSchema'
 import { TicketPurchase } from '@/components/museum/ticket-purchase'
 import { Ticket } from '@/components/museum/ticket'
+import ArtworksGameSkeleton from '@/components/museum/artworksGame_skeleton'
+import { ArtworksGame } from '@/components/museum/artworksGame'
 
 import {
   formatNumber,
@@ -146,7 +148,7 @@ async function submitUserMessage(content: string) {
     model: openai('gpt-3.5-turbo'),
     initial: <SpinnerMessage />,
     system: `\
-    You are an assistant that helps people prepare for their visit at Rijksmuseum in Amsterdam.
+    You are an assistant that helps people prepare for their visit to the Rijksmuseum in Amsterdam.
     You and the user can discuss any topic related to the museum and visiting the museum. The user can purchase their ticket, get infos on the current exhibitions on display, play a mini-game and learn about the museums master pieces. 
 
      Messages inside [] means that it's a UI element or a user event. For example:
@@ -156,6 +158,8 @@ async function submitUserMessage(content: string) {
     If the user wants to purchase tickets, call \`show_purchase\`.
 
     If the user wants to see his final tickets, call \`show_ticket\`.
+
+    If the user wants to start a mini game that is about assigning the correct artists to artworks, call \`show_artworks_game\`.
 
     If the user wants you to perform an impossible task that is not covered by the tools respond that you are a demo and cannot do that.
     
@@ -193,6 +197,67 @@ async function submitUserMessage(content: string) {
       return textNode
     },
     tools: {
+      showArtworksGame: {
+        description: 'Show three famous paintings to the user. Girl in a Blue Dress by Johannes Cornelisz Verspronck, The Milkmaid bt Johannes Vermeer, The Jewish Bride by Rembrandt. Assign each Image a number and let the user guess the correct number. ',
+        parameters: z.object({
+          artworks: z.array(
+            z.object({
+              artworkName: z.string().describe('The name of an artwor. Girl in a Blue Dress, The Milkmaid or The Jewish Bride.'),
+              artist: z.string().describe('The artist, who painted the artwork. Johannes Cornelisz Verspronck, Johannes Vermeer or Rembrandt'),
+              paintingNumber: z.number().describe('Assign a number of 1-3 to the paintings, that the user will have to asssign correctly.'),
+              filePath: z.string().describe('Path to the file of the paining. /Jewish_bride_Rembrandt.jpg, Girl_in_a_blue_dress_Verspronck.jpeg, Milkmaid_Verspronck.jpg.')
+            })
+          )
+        }),
+        generate: async function* ({ artworks }) {
+          yield (
+            <BotCard>
+              <ArtworksGameSkeleton />
+            </BotCard>
+          )
+
+          await sleep(1000)
+
+          const toolCallId = nanoid()
+
+          aiState.done({
+            ...aiState.get(),
+            messages: [
+              ...aiState.get().messages,
+              {
+                id: nanoid(),
+                role: 'assistant',
+                content: [
+                  {
+                    type: 'tool-call',
+                    toolName: 'showArtworksGame',
+                    toolCallId,
+                    args: { artworks }
+                  }
+                ]
+              },
+              {
+                id: nanoid(),
+                role: 'tool',
+                content: [
+                  {
+                    type: 'tool-result',
+                    toolName: 'showArtworksGame',
+                    toolCallId,
+                    result: artworks
+                  }
+                ]
+              }
+            ]
+          })
+
+          return (
+            <BotCard>
+              <ArtworksGame props={artworks} />
+            </BotCard>
+          )
+        }
+      },
       showPurchase: {
         description:
           'Show price and the UI to purchase a ticket for the museum visit. Use this if the user wants to purchase a ticket to visit the museum.',

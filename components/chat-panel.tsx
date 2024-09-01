@@ -48,7 +48,7 @@ export function ChatPanel({
     {
       heading: 'I want to play a mini game',
       subheading: 'guessing authors of artworks',
-      message: `Start mini game that is about assigning the correct artists to artworks.`
+      message: `Start a mini game that is about assigning the correct artists to artworks.`
     },
     {
       heading: 'What are the current exhibitions?',
