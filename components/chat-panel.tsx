@@ -65,7 +65,7 @@ export function ChatPanel({
       />
 
       <div className="mx-auto sm:max-w-2xl sm:px-4">
-        <div className="mb-4 grid grid-cols-2 gap-2 px-4 sm:px-0">
+        <div className="mb-4 grid grid-cols-2 gap-2 px-4 sm:px-0 sm:mb-24">
           {messages.length === 0 &&
             exampleMessages.map((example, index) => (
               <div
@@ -130,7 +130,6 @@ export function ChatPanel({
         ) : null}
 
         <div className="space-y-4 bg-zinc-400 backdrop-blur-sm bg-opacity-20 px-4 py-2 shadow-lg sm:rounded-t-xl md:py-4">
-          <PromptForm input={input} setInput={setInput} />
           <FooterText className="hidden sm:block text-white" />
         </div>
       </div>

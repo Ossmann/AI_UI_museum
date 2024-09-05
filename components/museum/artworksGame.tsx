@@ -13,9 +13,10 @@ interface Artwork {
   filePath: string
 }
 
+
 export function ArtworksGame({ props: artworks }: { props: Artwork[] }) {
-  // const [, setMessages] = useUIState<typeof AI>();
-  // const { submitUserMessage } = useActions();
+  const [, setMessages] = useUIState<typeof AI>();
+  const { submitUserMessage } = useActions();
 
   return (
     <div>
@@ -24,12 +25,12 @@ export function ArtworksGame({ props: artworks }: { props: Artwork[] }) {
           <div key={artwork.paintingNumber} className="pt-8 max-w-lg mx-auto text-sm">
             <div className="flex space-x-2 mb-4">
               <div className="flex flex-col items-center">
-                <div className="w-32 h-32 rounded-xl overflow-hidden">
+                <div className="w-32 h-32 rounded-xl overflow-hidden hover:border-4 border-green-800">
                 <button className=""
-                  //  onClick={async () => {
-                  //   const response = await submitUserMessage(`View ${stock.symbol}`)
-                  //   setMessages(currentMessages => [...currentMessages, response])
-                  // }}        
+                   onClick={async () => {
+                    const response = await submitUserMessage(`View ${artwork.paintingNumber}`)
+                    setMessages(currentMessages => [...currentMessages, response])
+                  }}        
                 >
                   <Image
                     src={artwork.filePath}
@@ -41,13 +42,14 @@ export function ArtworksGame({ props: artworks }: { props: Artwork[] }) {
                 </button>
                 </div>
                 <span className="mt-2">{artwork.artworkName}</span>
+                <span className="mt-2">{artwork.paintingNumber}</span>
               </div>
             </div>
           </div>
         ))}
       </div>
-      <div className="p-4 text-center text-sm ">
-        Guess the correct number
+      <div className="p-4 text-center ">
+        Which artwork was painted by Vermeer?
       </div>
     </div>
   );

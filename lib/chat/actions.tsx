@@ -198,14 +198,14 @@ async function submitUserMessage(content: string) {
     },
     tools: {
       showArtworksGame: {
-        description: 'Show three famous paintings to the user. Girl in a Blue Dress by Johannes Cornelisz Verspronck, The Milkmaid bt Johannes Vermeer, The Jewish Bride by Rembrandt. Assign each Image a number and let the user guess the correct number. ',
+        description: "Show three famous paintings to the user. Girl in a Blue Dress by Johannes Cornelisz Verspronck, The Milkmaid by Johannes Vermeer, The Jewish Bride by Rembrandt. Assign each Image a number and let the user guess the correct number.\n\n<artworks>\n  <artwork>\n    <artworkName>Girl in a Blue Dress</artworkName>\n    <artist>Johannes Cornelisz Verspronck</artist>\n    <paintingNumber>1</paintingNumber>\n    <filePath>/Girl_in_a_blue_dress_Verspronck.jpg</filePath>\n  </artwork>\n  \n  <artwork>\n    <artworkName>The Milkmaid</artworkName>\n    <artist>Johannes Vermeer</artist>\n    <paintingNumber>2</paintingNumber>\n    <filePath>/Milkmaid_Verspronck.jpg</filePath>\n  </artwork>\n  \n  <artwork>\n    <artworkName>The Jewish Bride</artworkName>\n    <artist>Rembrandt</artist>\n    <paintingNumber>3</paintingNumber>\n    <filePath>/Jewish_bride_Rembrandt.jpg</filePath>\n  </artwork>\n</artworks> The user needs to guess which painting was painted by Vermeer. Only number 2 is correct.",
         parameters: z.object({
           artworks: z.array(
             z.object({
               artworkName: z.string().describe('The name of an artwor. Girl in a Blue Dress, The Milkmaid or The Jewish Bride.'),
               artist: z.string().describe('The artist, who painted the artwork. Johannes Cornelisz Verspronck, Johannes Vermeer or Rembrandt'),
               paintingNumber: z.number().describe('Assign a number of 1-3 to the paintings, that the user will have to asssign correctly.'),
-              filePath: z.string().describe('Path to the file of the paining. /Jewish_bride_Rembrandt.jpg, Girl_in_a_blue_dress_Verspronck.jpeg, Milkmaid_Verspronck.jpg.')
+              filePath: z.string().describe('Path to the file of the paining. /Jewish_bride_Rembrandt.jpg, /Girl_in_a_blue_dress_Verspronck.jpeg, /Milkmaid_Verspronck.jpg.')
             })
           )
         }),
