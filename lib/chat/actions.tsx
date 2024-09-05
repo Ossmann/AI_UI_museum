@@ -36,6 +36,8 @@ import { TicketPurchase } from '@/components/museum/ticket-purchase'
 import { Ticket } from '@/components/museum/ticket'
 import ArtworksGameSkeleton from '@/components/museum/artworksGame_skeleton'
 import { ArtworksGame } from '@/components/museum/artworksGame'
+import { Exhibitions } from '@/components/museum/exhibitions'
+import { RelatedPaintings } from '@/components/museum/related_paintings'
 
 import {
   formatNumber,
@@ -161,6 +163,10 @@ async function submitUserMessage(content: string) {
 
     If the user wants to start a mini game that is about assigning the correct artists to artworks, call \`show_artworks_game\`.
 
+    If the user wants to find artworks related to a given example, call \`related_Paintings\`.
+
+    If the user wants to see the current exhibitions, call \`get_Exhibitions\`.
+
     If the user wants you to perform an impossible task that is not covered by the tools respond that you are a demo and cannot do that.
     
     Besides that, you can also chat with users and do some calculations if needed.`,
@@ -202,7 +208,7 @@ async function submitUserMessage(content: string) {
         parameters: z.object({
           artworks: z.array(
             z.object({
-              artworkName: z.string().describe('The name of an artwor. Girl in a Blue Dress, The Milkmaid or The Jewish Bride.'),
+              artworkName: z.string().describe('The name of an artwork. Girl in a Blue Dress, The Milkmaid or The Jewish Bride.'),
               artist: z.string().describe('The artist, who painted the artwork. Johannes Cornelisz Verspronck, Johannes Vermeer or Rembrandt'),
               paintingNumber: z.number().describe('Assign a number of 1-3 to the paintings, that the user will have to asssign correctly.'),
               filePath: z.string().describe('Path to the file of the paining. /Jewish_bride_Rembrandt.jpg, /Girl_in_a_blue_dress_Verspronck.jpeg, /Milkmaid_Verspronck.jpg.')
@@ -467,6 +473,73 @@ async function submitUserMessage(content: string) {
               </BotCard>
             )
           }
+        }
+      },
+      relatedPaintings: {
+        description:
+          'List three paintings relatd to a given artwork. Explain briefly there could be a connection to the given painting.',
+        parameters: z.object({
+          relatedWorks: z.array(
+            z.object({
+              src: z.string().describe('Find a weblink of an image from wikimedia of the painting.'),
+              artworkName: z.string().describe('The name of an artwork.'),
+              artist: z.string().describe('The artist, who painted the artwork.'),
+              explanation: z.string().describe('Explanation why the painting is related to the given example.'),
+            })
+          )
+        }),
+        generate: async function* ({ relatedWorks }) {
+          // Log the src values here
+          relatedWorks.forEach(work => {
+            console.log("Console of the WebImage Link:", work.src); // Logs the src of each painting
+          });
+
+          yield (
+            <BotCard>
+              <EventsSkeleton />
+            </BotCard>
+          )
+
+          await sleep(1000)
+
+          const toolCallId = nanoid()
+
+          aiState.done({
+            ...aiState.get(),
+            messages: [
+              ...aiState.get().messages,
+              {
+                id: nanoid(),
+                role: 'assistant',
+                content: [
+                  {
+                    type: 'tool-call',
+                    toolName: 'relatedPaintings',
+                    toolCallId,
+                    args: { relatedWorks }
+                  }
+                ]
+              },
+              {
+                id: nanoid(),
+                role: 'tool',
+                content: [
+                  {
+                    type: 'tool-result',
+                    toolName: 'relatedPaintings',
+                    toolCallId,
+                    result: relatedWorks
+                  }
+                ]
+              }
+            ]
+          })
+
+          return (
+            <BotCard>
+              <RelatedPaintings props={relatedWorks} />
+            </BotCard>
+          )
         }
       },
       listFlights: {
@@ -905,21 +978,21 @@ async function submitUserMessage(content: string) {
           }
         }
       },
-      getEvents: {
+      getExhibitions: {
         description:
-          'List funny imaginary events between user highlighted dates that describe stock activity.',
+          'List three imaginary exhibitions between user highlighted dates that could be at display at Rijksmuseum.',
         parameters: z.object({
-          events: z.array(
+          exhibitions: z.array(
             z.object({
               date: z
                 .string()
-                .describe('The date of the event, in ISO-8601 format'),
-              headline: z.string().describe('The headline of the event'),
-              description: z.string().describe('The description of the event')
+                .describe('The date of the exhibition, in ISO-8601 format'),
+              headline: z.string().describe('The headline of the exhibition'),
+              description: z.string().describe('The description of the exhibition')
             })
           )
         }),
-        generate: async function* ({ events }) {
+        generate: async function* ({ exhibitions }) {
           yield (
             <BotCard>
               <EventsSkeleton />
@@ -940,9 +1013,9 @@ async function submitUserMessage(content: string) {
                 content: [
                   {
                     type: 'tool-call',
-                    toolName: 'getEvents',
+                    toolName: 'getExhibitions',
                     toolCallId,
-                    args: { events }
+                    args: { exhibitions }
                   }
                 ]
               },
@@ -952,9 +1025,9 @@ async function submitUserMessage(content: string) {
                 content: [
                   {
                     type: 'tool-result',
-                    toolName: 'getEvents',
+                    toolName: 'getExhibitions',
                     toolCallId,
-                    result: events
+                    result: exhibitions
                   }
                 ]
               }
@@ -963,7 +1036,7 @@ async function submitUserMessage(content: string) {
 
           return (
             <BotCard>
-              <Events props={events} />
+              <Exhibitions props={exhibitions} />
             </BotCard>
           )
         }

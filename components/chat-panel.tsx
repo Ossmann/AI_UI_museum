@@ -11,6 +11,7 @@ import { useAIState, useActions, useUIState } from 'ai/rsc'
 import type { AI } from '@/lib/chat/actions'
 import { nanoid } from 'nanoid'
 import { UserMessage } from './stocks/message'
+import Image from 'next/image'
 
 export interface ChatPanelProps {
   id?: string
@@ -53,7 +54,7 @@ export function ChatPanel({
     {
       heading: 'What are the current exhibitions?',
       subheading: 'at my favorite museum',
-      message: `Find 3 artworks related to Night Watch with context information.`
+      message: `Show me the current exhibitions at Rijksmuseum.`
     },
   ]
 
@@ -129,8 +130,19 @@ export function ChatPanel({
           </div>
         ) : null}
 
-        <div className="space-y-4 bg-zinc-400 backdrop-blur-sm bg-opacity-20 px-4 py-2 shadow-lg sm:rounded-t-xl md:py-4">
-          <FooterText className="hidden sm:block text-white" />
+        <div className='flex justify-center '>
+          <div className="space-y-4 bg-zinc-100 px-4 py-2 shadow-lg sm:rounded-t-xl md:py-4  flex justify-center">
+            <div className=''>
+              <Image
+              src="/Fluxguide-Logo.svg"
+              alt="Fluxguide Logo"
+              width={100}  // Adjust width as needed
+              height={100} // Adjust height as needed
+            />
+            </div>
+          
+            {/* <FooterText className="hidden sm:block text-white" /> */}
+          </div>
         </div>
       </div>
     </div>
