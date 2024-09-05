@@ -1,7 +1,7 @@
 import { Poppins } from 'next/font/google';
 
 import '@/app/globals.css'
-import { TailwindIndicator } from '@/components/tailwind-indicator'
+import { HomeButton } from '@/components/tailwind-indicator'
 import { Providers } from '@/components/providers'
 import { Toaster } from '@/components/ui/sonner'
 import Image from 'next/image';
@@ -61,7 +61,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
           <div className="flex flex-col min-h-screen">
             <main className="flex flex-col flex-1">{children}</main>
           </div>
-          <TailwindIndicator />
+          <HomeButton />
         </Providers>
       </body>
     </html>
