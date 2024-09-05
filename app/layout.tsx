@@ -13,7 +13,7 @@ export const metadata = {
   title: {
     default: 'Museum AI UI Chatbot',
   },
-  description: 'An AI-powered chatbot to plan your museum visit built with Next.js and Vercel.',
+  description: 'An AI-powered chatbot to plan your museum with AI generated UI.',
   icons: {
     icon: '/favicon.ico',
     shortcut: '/favicon-16x16.png',
