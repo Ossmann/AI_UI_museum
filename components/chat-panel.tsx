@@ -1,3 +1,5 @@
+'use client'
+
 import * as React from 'react'
 
 import { shareChat } from '@/app/actions'
@@ -141,7 +143,7 @@ export function ChatPanel({
             />
             </div>
           
-            {/* <FooterText className="hidden sm:block text-white" /> */}
+            {/* <FooterText className="hidden sm:block " /> */}
           </div>
         </div>
       </div>
