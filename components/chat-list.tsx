@@ -1,8 +1,10 @@
 import { Separator } from '@/components/ui/separator'
 import { UIState } from '@/lib/chat/actions'
+import { useState } from 'react'
 import { Session } from '@/lib/types'
 import Link from 'next/link'
 import { ExclamationTriangleIcon } from '@radix-ui/react-icons'
+import { PromptFormChat } from './prompt-form-inChat'
 
 export interface ChatList {
   messages: UIState
@@ -11,6 +13,7 @@ export interface ChatList {
 }
 
 export function ChatList({ messages, session, isShared }: ChatList) {
+  const [input, setInput] = useState('');
   if (!messages.length) {
     return null
   }
@@ -47,6 +50,11 @@ export function ChatList({ messages, session, isShared }: ChatList) {
           {index < messages.length - 1 && <Separator className="my-4" />}
         </div>
       ))}
+
+
+      <div className='flex justify-center mt-20'>
+        <PromptFormChat input={input} setInput={setInput} />
+      </div>
     </div>
   )
 }
