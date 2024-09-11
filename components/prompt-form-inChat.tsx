@@ -78,7 +78,7 @@ export function PromptFormChat({
                 router.push('/new')
               }}
             >
-              <IconPlus />
+              <IconPlus className='stroke-2' />
               <span className="sr-only">New Chat</span>
             </Button>
           </TooltipTrigger>
