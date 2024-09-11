@@ -1,3 +1,5 @@
+'use client'
+
 import { Separator } from '@/components/ui/separator'
 import { UIState } from '@/lib/chat/actions'
 import { useState } from 'react'
