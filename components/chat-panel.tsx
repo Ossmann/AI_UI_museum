@@ -134,16 +134,16 @@ export function ChatPanel({
 
         <div className='flex justify-center '>
           <div className="space-y-4 bg-zinc-100 px-4 py-2 shadow-lg sm:rounded-t-xl md:py-4  flex justify-center">
-            <div className=''>
+            {/* <div className=''>
               <Image
               src="/Fluxguide-Logo.svg"
               alt="Fluxguide Logo"
               width={100}  // Adjust width as needed
               height={100} // Adjust height as needed
             />
-            </div>
+            </div> */}
           
-            {/* <FooterText className="hidden sm:block " /> */}
+            <FooterText className="hidden sm:block " />
           </div>
         </div>
       </div>
